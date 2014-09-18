@@ -1,0 +1,658 @@
+\section{Introduction}
+
+The classical solution concept in game theory is the Nash equilibrium.
+In a Nash equilibrium, each agent's strategy is optimal with respect to the strategies of its opponents.
+In a static game, a strategy is an action.
+In a dynamic game, a strategy is a contingency plan for every possible observable history.
+How can an agent be confident it is reacting optimally to an entire plan, if it only observes parts of it?
+As such, the Nash equilibrium is a reasonable solution concept for static games, but is not always suited for dynamic games.
+The full-rationality requirement of game theory, \ie, having to optimize against the exact strategies of the opponents, is a strong condition.
+\Aac{eee} is a different solution concept for stochastic games, introduced in~\cite{dudebout_shamma:2012}, that drops full rationality.
+Instead, in \aac{eee}, each agent's strategy is optimal with respect to a mockup of its opponents.
+This mockup satisfies a consistency condition; the agent exhibits some bounded rationality.
+\cite{dudebout_shamma:2012}~proved the existence of~\acp{eee} under some mild technical assumptions.
+
+The present paper studies the behavior of agents in \aac{eee}.
+This study takes place on perfect-monitoring repeated games, and with \acp{xeee}, in which each agent's mockup is independent of its own action.
+The main result states that~\aac{xeee} in a perfect-monitoring repeated game induces a correlated equilibrium on the underlying one-shot game.
+This result is illustrated on the hawk-dove game.
+A constructive result is also presented, showing how to build certain correlated equilibria from \acp{xeee}.
+Along with these results, a new notion of consistency is defined, which is less constraining than the one from~\cite{dudebout_shamma:2012}.
+This notion of consistency, applicable to stochastic games as well, is illustrated on the same hawk-dove game.
+
+The paper is organized as follows.
+\Cref{sec:games_and_equilibria} presents the game-theoretic concepts of correlated equilibria and repeated games.
+\Cref{sec:empirical-evidence_equilibria} summarizes the empirical-evidence setup with an emphasis on perfect-monitoring repeated games.
+The new notion of eventual consistency is also introduced.
+\Cref{sec:xeees_yield_correlated_equilibria} presents the main result of this paper.
+Any \ac{xeee} in a perfect-monitoring repeated game yields a correlated equilibrium for the underlying one-shot game.
+\Cref{sec:example} illustrates this result on the hawk-dove game.
+A correlated equilibrium is built by using depth-\(2\) models.
+The two notions of consistency are compared on this example.
+\Cref{sec:constructing_nash_equilibria_averages} builds on the intuition gained from the example.
+Any correlated equilibrium that is the average of Nash equilibria is built using an appropriate depth-\(k\)~\ac{xeee}.
+
+\section{Games and Equilibria}
+\label{sec:games_and_equilibria}
+
+\subsection{One-shot Games}
+A one-shot game is a model of interactive decision making.
+Each agent in a set~\(\cI\) makes decisions which impact all the agents in the set.
+Quantities relative to agent~\(i \in \cI\) are denoted by a subscript~\(i\).
+The elements of the set~\(-i = \cI \setminus \set{i}\) are called the opponents of agent~\(i\).
+Agent~\(i\) takes an action~\(a\Ii\) in the set~\(\cA\Ii\).
+The joint action of the agents is~\(a = \agstuple{a} \in \cA = \agsset{\cA}\).
+The utility function~\(u\Ii \from \cA \to \bR\) encodes agent~\(i\)'s preferences over the joint actions.
+Each agent seeks to maximize its expected utility.
+The function~\(u = \agstuple{u} \from \cA \to \bR\pow{\card{\cI}}\) fully describes the one-shot game.
+
+Game theory studies solution concepts for interactive decision making.
+The main solution concept for one-shot games is the Nash equilibrium.
+In a Nash equilibrium, each agent plays a best response to its opponents' actions.
+
+\begin{definition}[Nash Equilibrium]
+Let~\(u \from \cA \to \bR \pow{\card{\cI}}\) describe a game.
+Let~\(\alpha\Ii \in \distribover{\cA\Ii}\) be a distribution over the action space~\(\cA\Ii\) for agent~\(i\).
+
+The distribution~\(\alpha = \agstuple{\alpha} \in \prod\idxin{i}{\cI} \distribover{\cA\Ii}\) is a Nash equilibrium for~\(u\) if, for all~\(i\) in~\(\cI\) and~\(a\Ii'\) in~\(\cA\Ii\),
+\[
+\expectof[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}
+\ge
+\expectof[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}}
+.
+\]
+\end{definition}
+
+Another classical solution concept developed for one-shot games is the correlated equilibrium.
+A correlated equilibrium expands the notion of Nash equilibrium from independent distributions in~\(\prod\idxin{i}{\cI} \distribover{\cA\Ii}\) to distributions over the joint action space~\(\distribover{\cA} = \distribover{\agsset{\cA}}\).
+In other words, the agents do not necessarily pick their actions independently and they are allowed to correlate their play.
+The following two definitions formally introduce the correlated equilibrium.
+
+\begin{definition}[Correlated-equilibrium Distribution]
+Let a function~\(u \from \cA \to \bR \pow{\card{\cI}}\) describe a game.
+Let~\(\alpha \in \distribover{\cA}\) be a distribution over joint actions.
+
+The distribution~\(\alpha\) is a correlated-equilibrium distribution for~\(u\) if, for all~\(i\) in~\(\cI\),  \(a\Ii\) in~\(\cA\Ii\) such that~\(\alpha\Ii \elmt{a\Ii} > 0\), and~\(a\Ii'\) in~\(\cA\Ii\),
+\begin{multline*}
+\expectcond[A \drawn \alpha]{u\Ii \of{a\Ii, A\mI}}{A\Ii = a\Ii}
+\ge\\
+\expectcond[A\drawn\alpha]{u\Ii \of{a\Ii', A\mI}}{A\Ii = a\Ii}
+.
+\end{multline*}
+\end{definition}
+
+\begin{definition}[Correlated Equilibrium]
+Let~\(u \from \cA \to \bR \pow{\card{\cI}}\) describe a game.
+Let~\(\cT\Ii\) be a set of types for agent~\(i\), and~\(\cT = \agsset{\cT}\) be the resulting joint type space.
+Let~\(\pi \in \distribover{\cT}\) be a distribution over joint types.
+Let~\(\sigma\Ii \from \cT\Ii \to \distribover{\cA\Ii}\) be a strategy for agent~\(i\), and~\(\sigma\) be the resulting joint strategy.
+Consider a random variable~\(\Theta = \agstuple{\Theta}\) drawn according to~\(\pi\).
+Construct the random vector~\(A = \agstuple{A}\) such that for all~\(i \in \cI\),~\(A\Ii \drawn \sigma\Ii \of{\Theta\Ii}\).
+Let~\(\alpha\) denote the distribution of~\(A\).
+
+The pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for~\(u\) if~\(\alpha\) is a correlated-equilibrium distribution for~\(u\).
+\end{definition}
+
+The following characterization is useful in determining if a pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium.
+
+\begin{proposition}[Characterization]
+\label{res:characterization_CE}
+Let~\(u \from \cA \to \bR \pow{\card{\cI}}\) describe a game.
+Let~\(\cT\Ii\) be a set of types for agent~\(i\), and~\(\cT = \agsset{\cT}\) be the resulting joint type space.
+Let~\(\pi \in \distribover{\cT}\) be a distribution over joint types.
+Let~\(\sigma\Ii \from \cT\Ii \to \distribover{\cA\Ii}\) be a strategy for agent~\(i\), and~\(\sigma\) be the resulting joint strategy.
+
+The pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for~\(u\) if and only if, for all~\(i\) in \(\cI\), and~\(a\Ii'\) in~\(\cA\Ii\), \(\theta\Ii\) in~\(\cT\Ii\) such that~\(\probaof[\Theta \drawn \pi]{\Theta\Ii = \theta\Ii} > 0\),
+\begin{multline*}
+\expectcond[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\theta\Ii}, \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}
+\ge \\
+\expectcond[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}
+.
+\end{multline*}
+
+\end{proposition}
+
+\subsection{Repeated Games}
+
+A perfect-monitoring repeated game is a more elaborate model of interacting decision makers~\cite{mailath_samuelson:2006}.
+It stems from repeatedly playing a one-shot game~\(u\) at discrete time steps.
+At time step~\(t \in \bN\), agent~\(i\) chooses an action~\(a\Ii\Tt\).
+The joint action for time~\(t\) is~\(a\Tt\).
+Agent~\(i\) observes the actions chosen by the other agents~\(a\mI\Tt\) and receives the one-shot utility~\(u\Ii \of{a\Tt} = u\Ii \of{a\Ii\Tt, a\mI\Tt}\).
+The history up to time~\(t\) denoted by~\(h\Tt \in \cH\Tt\) is the information available to the agents at the beginning of time step~\(t\).
+In the perfect-monitoring setting, all the agents have access to the same information.
+The set of all possible histories is denoted by~\(\cH = \union\idxin{t}{\bN} \cH\Tt\).
+Agent~\(i\) selects its action according to a strategy, which is a mapping from histories to distributions over actions~\(\sigma\Ii \from \cH \to \distribover{\cA\Ii}\).
+The set of all strategies for agent~\(i\) is denoted by~\(\Sigma\Ii\).
+In a one-shot game, preferences of agent~\(i\) are over joint actions.
+In a repeated game, they are over joint strategies~\(\sigma = \agstuple{\sigma} \in \Sigma\), where~\(\Sigma = \agsset{\Sigma}\).
+These preferences are encoded in the repeated utility~\(U\Ii \from \Sigma \to \bR\), such that~\(U\Ii \of{\sigma} = \expectof[\sigma]{\sum\idxin{t}{\bN} \delta\Ii\pow{t} u\Ii \of{a\Tt}}\), where~\(\delta\Ii \in \interval[co]{0}{1}\) is a discount factor.
+The pair~\(\tuple{u, \delta}\), where~\(\delta = \agstuple{\delta}\), fully describes a perfect-monitoring repeated game.
+
+A perfect-monitoring repeated game can be interpreted as a one-shot game with joint action space~\(\Sigma\) and utility functions~\(U = \agstuple{U}\).
+Therefore, the Nash equilibrium is a solution concept applicable to perfect-monitoring repeated games.
+The interaction of the various strategies forms a coupled dynamical system.
+As a result, verifying that the strategy of agent~\(i\) is a best response to its opponents' strategies requires solving \aac{mdp}.
+The state of this \ac{mdp} is~\(h\) and its dynamic is induced by the joint strategy of its opponents~\(\sigma\mI\).
+For example, in a two-player game, at equilibrium, agent~\(1\)'s strategy is optimal for the~\ac{mdp} with state~\(h\), utility function~\(U\one\) and dynamic~\(h\nxt \drawn \tuple{h, \sigma\two \of{h}, a\one}\).
+
+The problem with this requirement is twofold.
+First, the state space of this~\ac{mdp} is potentially infinite.
+The size of the state space is defined by the part of the history used by the opponents to compute their actions.
+Second, and more importantly, it is, in a lot of applications, unrealistic to consider that an agent knows its opponents' strategies.
+The strategy is a plan of action for all possible contingencies.
+Each agent only observes the result of its strategy with the strategy of its opponent.
+As a result, for fixed strategies, only part of the history is visited.
+
+Numerous concepts lower the requirements of Nash equilibria~\cite{kalai_lehrer:1993:subjective,kandori:2011,jehiel:2005}.
+The \ac{eee} is one such concept and is exposed in the next section.
+
+\section{Empirical-evidence Equilibria}
+\label{sec:empirical-evidence_equilibria}
+
+The empirical-evidence framework for stochastic games was introduced in~\cite{dudebout_shamma:2012}.
+A short summary, with an emphasis on perfect-monitoring repeated games, is given below.
+For a proper introduction, with full motivation, please refer to~\cite{dudebout_shamma:2012}.
+The next subsection exposes the intuition on a two-agent example.
+The following one formalizes the concepts.
+
+\subsection{Intuition}
+
+Consider two agents playing a perfect-monitoring repeated game.
+Instead of acknowledging that it is playing a game, agent~\(1\) considers it is facing a single-agent decision-making problem.
+From agent~\(1\)'s perspective, agent~\(2\)'s action becomes an external signal and is rewritten~\(s\one\nxt = a\two\).
+For example, agent~\(1\)'s utility is rewritten from~\(u\one \of {a\one, a\two}\) to~\(u\one \of {a\one, s\one\nxt}\).
+Think of this signal as a disturbance; agent~\(1\) fully understands its impact, but not how it is generated.
+The setup is illustrated in \cref{fig:setup}.
+The meaning of~\(m\one\) and~\(z\one\) will become clear shortly.
+Since agent~\(1\) assumes it faces a single-agent problem, it only acknowledges the part of this setup in the gray box.
+In particular, the signal~\(s\one\nxt\) is unspecified.
+
+\tikzfigure{setup}{
+The exogenous empirical-evidence setup~\(\rbR\) for a two-agent perfect-monitoring repeated game.
+The gray box represent what agent~\(1\) acknowledges.
+In particular, its signal~\(s\one\nxt\) is unspecified.
+}
+
+The main idea of the empirical-evidence framework is to use a mockup to specify this signal.
+In the exogenous empirical-evidence framework, this mockup is exogenous, meaning that it does not depend on agent~\(1\)'s action~\(a\one\).
+This mockup is composed of two elements called a model and a predictor.
+The model is a dynamical system with state~\(z\one\) in a finite state space~\(\cZ\one\) and transition function~\(m\one \from \cZ\one \times \cS\one \to \distribover{\cZ\one}\).
+The predictor is a function~\(\mu\one \from \cZ\one \to \distribover{\cS\one}\) assigning probabilities to the signal for each state.
+The model is fixed.
+It represents an assumption made by the agent.
+The predictor corresponds to some tunable parameters of the mockup.
+The way agent~\(1\) uses the mockup to specify the signal is represented in \cref{fig:mockup}.
+
+\tikzfigure{mockup}{
+Agent~\(1\)'s exogenous empirical-evidence mockup system~\(\rbM\one\).
+The signal is specified by the mockup which is the combination of the model~\(m\one\) and the predictor~\(\mu\one\).
+}
+
+To better grasp what a mockup is, let us describe a simple model called the depth-\(2\) model.
+When using a depth-\(2\) model, agent~\(1\) assumes that the signal at time~\(t+1\) depends on the signals received at time~\(t\) and~\(t-1\).
+To do so, it uses~\(z\one = \tuple{s\one\prv, s\one}\) and~\(m\one \from \tuple{\tuple{a, b}, c} \mapsto \tuple{b, c}\).
+If agent~\(1\) uses predictor~\(\mu\one\), it believes that, having observed~\(s\one\prv\) and~\(s\one\), the probability of seeing~\(s\one\nxt\) is~\(\mu\one \of{s\one\prv, s\one} \elmt{s\one\nxt}\).
+
+Agent~\(1\) has two sets of tunable parameters, its strategy~\(\sigma\one\) and its predictor~\(\mu\one\).
+It uses two different systems to compute them.
+The first one, pictured in \cref{fig:setup}, composed of the two agents and their strategies, is denoted by~\(\rbR\).
+This notation emphasizes that this is the \emph{real} system, even though agent~\(1\) only acknowledges part of it.
+The second one is pictured in \cref{fig:mockup}.
+It is denoted by~\(\rbM\one\) to emphasize this is the \emph{mockup} system used by agent~\(1\).
+When agent~\(1\) has a strategy, it plays it against agent~\(2\) in~\(\rbR\).
+From their interaction, agent~\(1\) computes adequate values for its predictor.
+When agent~\(1\) has a predictor, it plugs it into~\(\rbM\one\) to form \aac{mdp}.
+Since it knows all the parameters of the~\ac{mdp}, it can compute an optimal strategy.
+
+When using model~\(m\one\), agent~\(1\) assumes the state of the world is~\(z\one\).
+As such, its available strategies are elements~\(\sigma\one \from \cZ\one \to \distribover{\cS\one}\).
+The role of~\(m\one\) is to build the state~\(z\one\) from the observation of signals.
+Model and state are used in~\(\rbR\) and in~\(\rbM\one\).
+In~\(\rbR\), \(z\one\) is built from observations of the true signal generated by agent~\(2\)'s actions.
+In~\(\rbM\one\), \(z\one\) is the true state of the system and is fed to the predictor~\(\mu\one\) in order to generate a signal.
+The state~\(z\one\) in~\(\rbR\) serves a double purpose.
+First, agent~\(1\) uses it to compute its next action.
+Second, it is used to compute the probabilities~\(\probacond[\rbR,\sigma]{s\one\nxt}{z\one}\).
+These are the probabilities with which each signal is observed when being in a given state.
+A predictor is said to be consistent if~\(\mu\one \of{z\one} \elmt{s\one\nxt} = \probacond[\rbR,\sigma]{s\one\nxt}{z\one}\).
+In other words, a predictor is consistent if it generates a signal with statistics comparable to the true signal.
+Similar notions of consistency have been used in~\cite{sandroni_smorodinsky:2004,eyster_piccione:2011}.
+
+Given a predictor, agent~\(1\) uses~\(\rbM\one\) to compute an optimal strategy.
+Given a strategy, agent~\(1\) turns to~\(\rbR\) to compute a consistent predictor.
+Agent~\(2\) does the same things in systems~\(\rbM\two\) and~\(\rbR\).
+\Aac{xeee} is a pair of predictors~\(\tuple{\mu\one, \mu\two}\) and a pair of strategies~\(\tuple{\sigma\one, \sigma\two}\) simultaneously consistent and optimal.
+
+\subsection{Formal Setup}
+
+Consider a perfect-monitoring \(n\)-agent repeated game described by~\(\tuple{u, \delta}\).
+Let~\(i\) denote an agent from the set~\(\cI\).
+The joint action of agent~\(i\)'s opponents is called agent~\(i\)'s signal and is denoted by~\(s\Ii\nxt = a\mI\).
+Agent~\(i\) forms a parametric mockup of signal~\(s\Ii\) described by three components.
+First, it uses a model state~\(z\Ii\) in a finite state space~\(\cZ\Ii\).
+Second, it uses an a priori model structure, called the model~\(m\Ii \from \cZ\Ii \times \cS\Ii \to \distribover{\cZ\Ii}\).
+Third, it has tunable parameters, called a predictor~\(\mu\Ii \from \cZ\Ii \to \distribover{\cS\Ii}\).
+By adjusting the parameters in the predictor, the mockup generates a signal resembling the true observed signal.
+The signal is exogenously generated since it is not impacted by agent~\(i\)'s action.
+
+The model~\(m\Ii\) represents an assumption by agent~\(i\) regarding its signal.
+It is considered fixed.
+The tunable parameters for agent~\(i\) are its strategy~\(\sigma\Ii \from \cZ\Ii \to \distribover{\cA\Ii}\) and its predictor~\(\mu\Ii\).
+
+\subsubsection{Optimality}
+
+Given a predictor~\(\mu\Ii\), agent~\(i\) computes an optimal strategy.
+The notion of optimality is defined in system~\(\rbM\Ii\), depicted in \cref{fig:mockup}.
+The strategy is optimal if it is a solution to the~\ac{mdp} induced by~\(m\Ii\) and~\(\mu\Ii\).
+
+\begin{definition}[Optimality]
+The strategy~\(\sigma\Ii \in \Sigma\Ii\) is optimal for~\(\tuple{u\Ii, \delta\Ii}\) with respect to~\(m\Ii\) and~\(\mu\Ii\) if, for all~\(\sigma\Ii' \in \Sigma\Ii\),
+\begin{multline*}
+\textstyle
+\expectof[\sigma\Ii, m\Ii, \mu\Ii]{\sum\idxfromto{t}{0}{\infty} \delta\Ii\pow{t} u\Ii \of{a\Ii\Tt, s\Ii\Tp}}
+\geq \\
+\textstyle
+\expectof[\sigma\Ii', m\Ii, \mu\Ii]{\sum\idxfromto{t}{0}{\infty} \delta\Ii\pow{t} u\Ii \of{a\Ii\Tt, s\Ii\Tp}}
+.
+\end{multline*}
+\end{definition}
+
+The following proposition shows that, in this specific setup, for repeated games, optimality is equivalent to myopic optimality.
+This result relies on the perfect-monitoring structure of the repeated game and the exogeneity of the model.
+
+\begin{proposition}[Myopic Optimality]
+\label{res:myopic_optimality}
+Let~\(\sigma\Ii \from \cZ\Ii \to \distribover{\cA\Ii}\) be a strategy such that, for all~\(z\Ii\) in~\(\cZ\Ii\) and~\(a\Ii'\) in~\(\cA\Ii\)
+\[
+\expectof{u\Ii \of{\sigma\Ii \of{z\Ii}, \mu\Ii \of{z\Ii}}}
+\ge
+\expectof{u\Ii \of{a\Ii', \mu\Ii \of{z\Ii}}}
+.
+\]
+
+The strategy~\(\sigma\Ii\) is optimal for~\(\tuple{u\Ii, \delta\Ii}\) with respect to~\(m\Ii\) and~\(\mu\Ii\).
+\end{proposition}
+
+\begin{proof}
+The expected payoff at time~\(t\) depends on the model state~\(z\Ii\Tt\) and the action~\(a\Ii\Tt\).
+Since the action has no impact on the dynamic of the model state, myopic optimization is sufficient to guarantee optimality.
+\end{proof}
+
+\subsubsection{Consistency}
+
+Given a strategy~\(\sigma\Ii\), agent~\(i\) computes a consistent predictor.
+The notion of consistency is defined in system~\(\rbR\), depicted in \cref{fig:setup}.
+The system composed of the mockups~\(m\) and the strategies~\(\sigma\) forms a Markov chain with state~\(z = \agstuple{z}\).
+The following assumption is required to properly define consistency.
+
+\begin{assumption}
+\label{ass:unicity}
+The Markov chain induced by the mockups~\(m\) and the strategies~\(\sigma\) admits a unique stationary distribution~\(\pi\).
+\end{assumption}
+
+For example, this assumption is satisfied if the Markov chain is unichain, \ie, containing a single communication class.
+
+The quantity~\(\probacond[Z \drawn \pi]{\sigma\mI \of{Z\mI} = s\Ii\nxt}{Z\Ii = z\Ii}\) is well defined when \cref{ass:unicity} is verified, .
+For convenience, it is given the shorthand notation~\(\probacond[\pi]{s\Ii\nxt}{z\Ii}\).
+This quantity is of interest as it represents the long run behavior of the signal.
+Indeed, the following relation holds:
+\[
+\limfty{T} \frac{1}{T} \sum\idxfromto{t}{1}{T} \probacond[m, \sigma]{S\Ii\Tp = s\Ii\nxt}{Z\Ii\Tt = z\Ii}
+=
+\probacond[\pi]{s\Ii\nxt}{z\Ii}
+.
+\]
+Furthermore, if the chain is unichain and aperiodic, an even stronger notion of convergence holds.
+The limit as~\(t\) goes to infinity of~\(\probacond[m, \sigma]{S\Ii\Tp = s\Ii\nxt}{Z\Ii\Tt = z\Ii}\) exists and
+\[
+\limfty{t} \probacond[m, \sigma]{S\Ii\Tp = s\Ii\nxt}{Z\Ii\Tt = z\Ii}
+=
+\probacond[\pi]{s\Ii\nxt}{z\Ii}
+.
+\]
+
+\begin{definition}[Consistency]
+Let~\(\mu\Ii\) be a predictor, \(\sigma\) be strategies, and~\(\pi\) be the stationary distribution of the Markov chain with state~\(z\) induced by~\(m\) and~\(\sigma\).
+
+The predictor~\(\mu\Ii\) is consistent with~\(m\)  and \(\sigma\) if, for all~\(z\Ii\) in~\(\cZ\Ii\) and~\(s\Ii\nxt\) in~\(\cS\Ii\),
+\(
+\mu\Ii \of{z\Ii} \elmt{s\Ii\nxt}
+=
+\probacond[\pi]{s\Ii\nxt}{z\Ii}
+.
+\)
+\end{definition}
+
+This notion of consistency requires that~\(\probacond[\pi]{s\Ii\nxt}{z\Ii}\) be defined for all~\(s\Ii\nxt\) and~\(z\Ii\).
+In~\cite{dudebout_shamma:2012}, this requirement is met by assuming the Markov chain is ergodic
+Indeed, ergodicity ensures that for all~\(z\Ii\), \(\probaof[\pi]{z\Ii} > 0\).
+However, ergodicity is more constraining than~\cref{ass:unicity}.
+
+We now introduce a less constraining notion of consistency only requiring~\cref{ass:unicity}.
+Suppose the state~\(z\Ii\) is such that~\(\probaof[\pi]{z\Ii} = 0\).
+By definition, this state is vanishing and is eventually not seen.
+Therefore, the value given by the predictor for this state is irrelevant.
+The formal definition of eventual consistency is the following.
+
+\begin{definition}[Eventual Consistency]
+Let~\(\mu\Ii\) be a predictor, \(\sigma\) be strategies, and~\(\pi\) be the stationary distribution of the Markov chain with state~\(z\) induced by~\(m\) and~\(\sigma\).
+
+The predictor~\(\mu\Ii\) is eventually consistent with~\(m\)  and \(\sigma\) if, for all~\(z\Ii\) in~\(\cZ\Ii\) and~\(s\Ii\nxt\) in~\(\cS\Ii\),
+\[
+\probaof[\pi]{z\Ii} > 0
+\implies
+\mu\Ii \of{z\Ii} \elmt{s\Ii\nxt}
+=
+\probacond[\pi]{s\Ii\nxt}{z\Ii}
+.
+\]
+\end{definition}
+
+An eventually consistent predictor takes arbitrary values on vanishing states.
+
+\subsubsection{Equilibrium}
+
+Combining the definitions of optimality and consistency yields the~\ac{xeee} solution concept.
+
+\begin{definition}[Equilibrium]
+The pair~\(\tuple{\mu, \sigma}\) is \aac{xeee} for the game~\(\tuple{u, \delta}\) with models~\(m\) if the following two conditions hold for each agent~\(i\):
+\begin{itemize}
+\item The strategy~\(\sigma\Ii\) is optimal for~\(\tuple{u\Ii, \delta\Ii}\) with respect to~\(m\Ii\) and~\(\mu\Ii\).
+\item The predictor~\(\mu\Ii\) is consistent with~\(m\) and~\(\sigma\).
+\end{itemize}
+\end{definition}
+
+This definition works with either notion of consistency.
+In what follows, we use consistency and mention the appropriate changes to accommodate eventual consistency.
+
+From this definition, it is also possible to define approximate equilibria.
+In an approximate equilibrium, the strategies are approximately optimal with respect to their mockup.
+\cite{dudebout_shamma:2012}~proved that approximate equilibria always exist.
+This result carries over seamlessly to eventual consistency.
+The proof uses~\cite[Theorem~4.1]{meyer:1980} which works on unichain Markov chains as well as ergodic ones.
+
+\section{\acp{xeee} Yield Correlated Equilibria}
+\label{sec:xeees_yield_correlated_equilibria}
+
+\begin{theorem}
+Let the pair~\(\tuple{\mu, \sigma}\) be \aac{xeee} for the game~\(\tuple{u, \delta}\) with models~\(m\).
+Suppose that~\(\sigma\) and~\(m\) induce a Markov chain over the model states~\(z\) having a single stationary distribution~\(\pi\).
+
+The pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for the one-shot game described by~\(u\).
+\end{theorem}
+
+In particular, when all the agents use a memoryless model, the pair~\(\tuple{\pi, \sigma}\) is a Nash equilibrium for~\(u\).
+
+The careful choice of definitions in the previous sections makes the proof of this theorem straightforward.
+The key insight of the proof is to interpret the model state~\(z\Ii\) as the type of agent~\(i\).
+The proof is given in term of consistency and the eventual consistency counterpart is discussed afterwards.
+
+\begin{proof}
+Fix an agent~\(i\).
+Let us prove that the inequality condition of~\cref{res:characterization_CE} holds.
+To do so, express the consistency condition in terms of expectations and use the optimality condition to obtain the appropriate inequality.
+
+Pick a state~\(z\Ii \in \cZ\Ii\) and a signal~\(s\Ii\nxt = a\mI \in \cS\Ii\).
+By definition of \aac{xeee}, the predictor~\(\mu\Ii\) is consistent with~\(m\) and~\(\sigma\).
+The consistency condition for state~\(z\Ii\) and signal~\(a\mI\) can be rewritten as follows:
+\begin{align*}
+\mu\Ii \of{z\Ii} \elmt{a\mI}
+&= \probacond[\pi]{a\mI}{z\Ii} \\
+&= \sum\idxin{z\mI}{\cZ\mI} \probacond[\pi]{a\mI}{z\Ii, z\mI} \probacond[\pi]{z\mI}{z\Ii} \\
+&= \sum\idxin{z\mI}{\cZ\mI} \sigma\mI \of{z\mI} \elmt{a\mI} \probacond[\pi]{z\mI}{z\Ii} \\
+&= \expectcond[Z \drawn \pi]{\sigma\mI \of{Z\mI} \elmt{a\mI}}{Z\Ii = z\Ii}
+,
+\end{align*}
+where~\(\sigma\mI \of{z\mI} \elmt{a\mI}\) denotes~\(\prod\idxin{j}{-i} \sigma\Ij \of{z\Ij} \elmt{a\Ij}\).
+This equality holds for any~\(a\mI\), therefore,
+\[
+\mu\Ii \of{z\Ii} = \expectcond[Z \drawn \pi]{\sigma\mI \of{Z\mI}}{Z\Ii = z\Ii}.
+\]
+
+Pick an action~\(a\Ii' \in \cA\Ii\).
+By definition of \aac{xeee}, the strategy~\(\sigma\Ii\) is optimal with respect to~\(\mu\Ii\) and~\(m\Ii\).
+Substituting the expression for~\(\mu\Ii \of{z\Ii}\) in the optimality condition of~\cref{res:myopic_optimality} gives the following inequality:
+\begin{multline*}
+\expectcond[Z \drawn \pi]{u\Ii \of{\sigma\Ii \of{z\Ii}, \sigma\mI \of{z\mI}}}{Z\Ii = z\Ii}
+\ge \\
+\expectcond[Z \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{z\mI}}}{Z\Ii = z\Ii}
+.
+\end{multline*}
+Interpreting~\(z\Ii\) as the type of agent~\(i\) in~\cref{res:characterization_CE} guarantees that the pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for~\(u\).
+\end{proof}
+
+The proof for eventual consistency is almost identical.
+The inequality in \cref{res:characterization_CE} only has to hold on types~\(\theta\Ii\) such that~\(\probaof[\Theta \drawn \pi]{\Theta\Ii = \theta\Ii} > 0\).
+The definition of eventual consistency guarantees exactly this fact.
+
+\section{Example}
+\label{sec:example}
+
+In the hawk-dove game, two agents compete for a prize of value~\(6\).
+The actions of each agent are to be aggressive or passive.
+In a biological analogy, the aggressive action is called hawk and the passive action is called dove.
+If only one agent is aggressive, this agent gets the prize.
+If both agents are aggressive, a fight ensues and both agents are hurt.
+Finally, if both agents are passive, they split the prize equally.
+This story is encoded in the following normal-form game:
+\vspace{-1em}
+\[
+\punctuategame{
+\begin{game}{2}{2}
+        \> \(\rlH\)   \> \(\rlD\)  \\
+\(\rH\) \> \(-1, -1\) \> \(6, 0\) \\
+\(\rD\) \> \(0, 6\)   \> \(3, 3\)
+\end{game}}
+{.}
+\]
+The actions of agent~\(1\) are represented by the uppercase letters~\(\rH\) and~\(\rD\).
+Those of agent~\(2\) by their lowercase counterparts~\(\rlH\) and~\(\rlD\).
+
+The hawk-dove game has two pure Nash equilibria~\(\tuple{\rH, \rlD}\) and~\(\tuple{\rD, \rlH}\), and one mixed Nash equilibrium where the agents play~\(\frac{3}{4} \rH + \frac{1}{4} \rD\) and~\(\frac{3}{4} \rlH + \frac{1}{4} \rlD\) respectively.
+
+Let us construct \aac{xeee} implementing a correlated-equilibrium distribution.
+The correlated-equilibrium distribution chosen is the average of the two pure Nash equilibria~\(\alpha = \frac{1}{2} \tuple{\rH, \rlD} + \frac{1}{2} \tuple{\rD, \rlH}\).
+The set of correlated-equilibrium distributions is a non-empty convex set containing all the Nash equilibria.
+Therefore, \(\alpha\) is a correlated-equilibrium distribution, even though it is not a Nash equilibrium.
+Given the symmetric nature of the game, we chose to implement a symmetric equilibrium, meaning that the strategies of the two agents are identical.
+As a consequence, their predictors are also identical.
+Both agents use the previously-mentioned depth-\(2\) model.
+
+Let us describe what the solution looks like from agent~\(1\)'s perspective.
+Agent~\(1\)'s state is~\(z\one = \tuple{a\two\prv, a\two}\), where~\(a\two\) is the latest observed action of agent~\(2\) and~\(a\two\prv\) the one before that.
+If agent~\(1\) sees that agent~\(2\) alternates its actions, it supposes that agent~\(2\) acts according to the plan and that this alternation will continue.
+If agent~\(2\) uses the same action twice in a row, agent~\(1\) is unsure about agent~\(2\)'s behavior.
+According to these predictions, agent~\(1\) builds optimal or approximately optimal strategies.
+
+Let us now fill in the details.
+We provide two variations associated with eventual consistency and consistency.
+
+\subsection{Eventual Consistency}
+The first variation is closest to the story previously described.
+Agent~\(1\) uses the following predictor associated with its depth-\(2\) model:
+\[
+\begin{aligned}
+\mu\one \of{\rlD, \rlH} & = \rlD, \\
+\mu\one \of{\rlH, \rlD} & = \rlH, \\
+\end{aligned}
+\quad
+\begin{aligned}
+\mu\one \of{\rlH, \rlH} & = \tfrac{3}{4} \rlH + \tfrac{1}{4} \rlD, \\
+\mu\one \of{\rlD, \rlD} & = \tfrac{3}{4} \rlH + \tfrac{1}{4} \rlD. \\
+\end{aligned}
+\]
+An associated optimal strategy is
+\[
+\begin{aligned}
+\sigma\one \of{\rlD, \rlH} & = \rH, \\
+\sigma\one \of{\rlH, \rlD} & = \rD, \\
+\end{aligned}
+\quad
+\begin{aligned}
+\sigma\one \of{\rlH, \rlH} & = \tfrac{1}{2} \rH + \tfrac{1}{2} \rD, \\
+\sigma\one \of{\rlD, \rlD} & = \tfrac{1}{2} \rH + \tfrac{1}{2} \rD. \\
+\end{aligned}
+\]
+Agent~\(2\)'s predictor and strategy are obtained by inverting the case, \eg~\(\mu\two \of{\rD, \rH} = \rD\) and~\(\sigma\two \of{\rD, \rH} = \rlH\).
+These strategies induce a Markov chain over the state space~\(\cZ\one \times \cZ\two = \cA\two\pow{2} \times \cA\one\pow{2}\).
+By computing the transition matrix, one verifies that this Markov chain is unichain and periodic with period two.
+Its communication class is~\(\set{\tuple{\rlH, \rlD, \rD, \rH}, \tuple{\rlD, \rlH, \rH, \rD}}\).
+In the limit, the chain alternates between these two states and the following relations hold:
+\begin{equation}
+\label{eq:hawk-dove_alternating_states}
+\begin{aligned}
+&\limfty{t} \probacond[\rbR, \sigma]{s\one\Tp = \rlD}{z\one\Tt = \tuple{\rlD, \rlH}} = 1, \\
+&\limfty{t} \probacond[\rbR, \sigma]{s\one\Tp = \rlH}{z\one\Tt = \tuple{\rlH, \rlD}} = 1.
+\end{aligned}
+\end{equation}
+In the limit, \(14\) out of the~\(16\) states do not appear.
+In particular, any state in which an agent used the same action twice in a row is transient.
+Therefore,
+\begin{equation}
+\label{eq:hawk-dove_unseen_states}
+\limfty{t} \probaof[\rbR, \sigma]{z\one\Tt \in \set{\tuple{\rlD, \rlD}, \tuple{\rlH, \rlH}}}
+= 0.
+\end{equation}
+\Cref{eq:hawk-dove_unseen_states} guarantees that states~\(\tuple{\rlH, \rlH}\) and~\(\tuple{\rlD, \rlD}\) vanish.
+Therefore, the values of~\(\mu\one \of{\rlH, \rlH}\) and~\(\mu\one \of{\rlD, \rlD}\) are arbitrary.
+The values of~\(\mu\one \of{\rlD, \rlH}\) and~\(\mu\one \of{\rlH, \rlD}\) match the values observed in~\cref{eq:hawk-dove_alternating_states}.
+Therefore, the predictors are eventually consistent.
+
+Eventual consistency allows for the predictors to take arbitrary values on transient states~\(\tuple{\rlH,\rlH}\) and~\(\tuple{\rlD,\rlD}\).
+Therefore, we chose values helping with the optimality condition.
+The values chosen correspond to the mixed Nash equilibrium in which the agents are indifferent between their two actions.
+Agent~\(1\) responds optimally in each of the four states~\(z\one\).
+
+Therefore, we have constructed an exact \ac{xeee} with the notion of eventual consistency which implements the designated correlated-equilibrium distribution.
+
+\subsection{Consistency}
+
+Agent~\(1\) uses strategy
+\[
+\begin{aligned}
+\tilde{\sigma}\one \of{\rlD, \rlH} & = 0.999 \, \rH + 0.001 \, \rD, \\
+\tilde{\sigma}\one \of{\rlH, \rlD} & = 0.999 \, \rD + 0.001 \, \rH, \\
+\end{aligned}
+\quad
+\begin{aligned}
+\tilde{\sigma}\one \of{\rlH, \rlH} & = \tfrac{1}{2} \rH + \tfrac{1}{2} \rD, \\
+\tilde{\sigma}\one \of{\rlD, \rlD} & = \tfrac{1}{2} \rH + \tfrac{1}{2} \rD. \\
+\end{aligned}
+\]
+Define~\(\tilde{\sigma}\two\) in a symmetrical fashion.
+The induced Markov chain over~\(\cZ\one \times \cZ\two\) is irreducible and aperiodic.
+No state is transient.
+Therefore, predictors have to be defined for all states.
+The consistent predictor for agent~\(1\) is
+\[
+\begin{aligned}
+\tilde{\mu}\one \of{\rlD, \rlH} & = 0.996 \, \rlD + 0.004 \, \rlH, \\
+\tilde{\mu}\one \of{\rlH, \rlD} & = 0.996 \, \rlH + 0.004 \, \rlD, \\
+\end{aligned}
+\quad
+\begin{aligned}
+\tilde{\mu}\one \of{\rlH, \rlH} & = 0.5 \, \rlH + 0.5 \, \rlD, \\
+\tilde{\mu}\one \of{\rlD, \rlD} & = 0.5 \, \rlH + 0.5 \, \rlD. \\
+\end{aligned}
+\]
+
+In this setting, consistency is immediate, by definition of the predictors.
+Optimality is slightly trickier.
+Recall that in \aac{xeee} for a perfect-monitoring repeated game, the optimality condition translates to myopic optimality.
+Therefore, \(\tilde{\sigma}\one\)'s optimality with respect to~\(\tilde{\mu}\one\) and~\(m\one\) is equivalent to the following condition.
+For all~\(z\one \in \cZ\one\), agent~\(1\)'s mixed action~\(\tilde{\sigma}\one \of{z\one}\) is a best response to agent~\(2\)'s mixed action~\(\tilde{\mu}\one \of{z\one}\).
+This is not the case for the states~\(\tuple{\rlD, \rlD}\) and~\(\tuple{\rlH, \rlH}\).
+Agent~\(1\)'s sole best-response to~\(0.5 \, \rlH + 0.5 \, \rlD\) is~\(\rH\).
+However, \(\tilde{\sigma}\one\) is approximately optimal with respect to~\(\tilde{\mu}\one\) and~\(m\one\) for discount factors~\(\delta\one\) close enough to one.
+Most of the time is spent in states~\(\tuple{\rlD, \rlH}\) and~\(\tuple{\rlH, \rlD}\) for which~\(\tilde{\sigma}\one\) is optimal.
+By taking~\(\delta\one\) close enough to one, the effect of acting non-optimally in the other two states becomes negligible.
+This example illustrates that optimality is equivalent to myopic optimality but that approximate optimality does not require approximate myopic optimality.
+
+The resulting equilibrium is an approximate \ac{xeee}.
+The associated distribution over actions is the following approximation of the desired correlated-equilibrium distribution:
+\[
+\begin{matrix}
+0.004 \, \tuple{\rH, \rlH} & 0.496 \, \tuple{\rH, \rlD} \\
+0.496 \, \tuple{\rD, \rlH} & 0.004 \, \tuple{\rD, \rlD}
+\end{matrix}.
+\]
+
+
+\section{Constructing Nash Equilibria Averages}
+\label{sec:constructing_nash_equilibria_averages}
+
+The example of the previous section easily extends to general finite games and yields a large set of correlated-equilibrium distributions.
+Most of the work for the proof has already been done in the example.
+
+\begin{theorem}
+\label{res:xeee_and_ce}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\seqfromto{a}{\tm}{l}{1}{k}\) be~\(k\), non-necessarily distinct, pure Nash equilibria of~\(u\).
+Let~\(\alpha = \frac{1}{k} \sum\idxfromto{l}{1}{k} a\tm{l}\), the average of these Nash equilibria, which is a correlated-equilibrium distribution.
+
+For large enough discount factors~\(\seqin{\delta}{\ag}{i}{\cI}\), \(~\alpha\) is implementable by an approximate~\ac{xeee}, in which each agent uses a depth-\(k\) eventually consistent model.
+\end{theorem}
+
+\begin{proof}
+Let~\(i \in \cI\) be an agent.
+Define its depth-\(k\) predictor as follows:
+\[
+\begin{aligned}
+\mu\Ii \of {a\mI\tm{1}, a\mI\tm{2}, \cdots, a\mI\tm{k - 1}, a\mI\tm{k}} & = a\mI\tm{1}, \\[-5pt]
+&\vdotswithin{=} \\[-5pt]
+\mu\Ii \of {a\mI\tm{k}, a\mI\tm{1}, \cdots, a\mI\tm{k - 2}, a\mI\tm{k - 1}} & = a\mI\tm{k},
+\end{aligned}
+\]
+and for other states~\(z\Ii\),
+\(
+\mu\Ii \of {z\Ii} = \frac{1}{k} \sum\idxfromto{l}{1}{k} a\mI\tm{k}.
+\)
+
+As opposed to the example, a mixed Nash equilibrium does not always exist.
+This reduced flexibility in defining the predictor on vanishing states, explains why only approximate~\acp{xeee} are guaranteed.
+
+Define agent~\(i\)'s strategy as follows:
+\[
+\begin{aligned}
+\sigma\Ii \of {a\mI\tm{1}, a\mI\tm{2}, \cdots, a\mI\tm{k - 1}, a\mI\tm{k}} &= a\Ii\tm{1}, \\[-5pt]
+&\vdotswithin{=} \\[-5pt]
+\sigma\Ii \of {a\mI\tm{k}, a\mI\tm{1}, \cdots, a\mI\tm{k - 2}, a\mI\tm{k - 1}} &= a\Ii\tm{k},
+\end{aligned}
+\]
+and for other states~\(z\Ii\),
+\(
+\sigma\Ii \of {z\Ii} = \frac{1}{k} \sum\idxfromto{l}{1}{k} a\Ii\tm{k}.
+\)
+
+The induced Markov chain is unichain and periodic with period~\(k\).
+Its communication class has~\(k\) states corresponding to each of the~\(k\) Nash equilibria.
+In the limit, the chain cycles through these~\(k\) states in the order imposed by the labeling of the equilibria.
+The eventual consistency of the predictors is proven as in the example.
+
+As previously mentioned, it is not always possible to guarantee optimality of~\(\sigma\Ii\) with respect to~\(\mu\Ii\).
+However, \(\sigma\Ii\) is optimal for all the states visited in the limit.
+The lack of optimality is only for vanishing states.
+Therefore, a large enough discount factor guarantees approximate optimality.
+\end{proof}
+
+\begin{corollary}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\seqfromto{a}{\tm}{l}{1}{k}\) be~\(k\), non-necessarily distinct, pure Nash equilibria of~\(u\).
+Let~\(\alpha = \frac{1}{k} \sum\idxfromto{l}{1}{k} a\tm{l}\), the average of these Nash equilibria, which is a correlated-equilibrium distribution.
+
+For large enough discount factors~\(\seqin{\delta}{\ag}{i}{\cI}\), \(~\alpha\) can be approximated by a correlated-equilibrium distribution induced by an approximate~\ac{xeee}, in which each agent uses a depth-\(k\) consistent model.
+\end{corollary}
+
+The proof of this corollary is omitted as it is easily derived from the example.
+
+\section{Conclusion}
+This paper gave the first characterization of the behavior of agents in \aac{eee}.
+In a perfect-monitoring repeated game, \acp{xeee} induce correlated equilibria of the underlying one-shot game.
+This result was illustrated on the hawk-dove game.
+A less constraining notion of consistency was introduced and illustrated on the same hawk-dove game.
+A method to induce correlated-equilibrium distributions in the convex hull of pure Nash equilibria was presented.
+
+The combined requirements of optimality and exogenous consistency in the perfect-monitoring repeated game case are extremely close to Nash equilibrium conditions.
+As such, \acp{xeee} seem unable to induce correlated-equilibrium distributions outside the convex hull of Nash equilibria.
+It is an open question to determine if all correlated-equilibrium distributions can be induced by, potentially endogenous,~\acp{eee}.

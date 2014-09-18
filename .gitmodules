@@ -1,0 +1,24 @@
+[submodule "paper/texmf/bibtex/bib/bibtex_ddb"]
+	path = paper/texmf/bibtex/bib/bibtex_ddb
+	url = https://github.com/dudebout/bibtex_ddb
+[submodule "paper/texmf/tex/latex/latex_ddbgame"]
+	path = paper/texmf/tex/latex/latex_ddbgame
+	url = https://github.com/dudebout/latex_ddbgame
+[submodule "paper/texmf/tex/latex/latex_ddbieee"]
+	path = paper/texmf/tex/latex/latex_ddbieee
+	url = https://github.com/dudebout/latex_ddbieee
+[submodule "paper/texmf/tex/latex/latex_ddbsymb"]
+	path = paper/texmf/tex/latex/latex_ddbsymb
+	url = https://github.com/dudebout/latex_ddbsymb
+[submodule "paper/texmf/tex/generic/matrix.skeleton"]
+	path = paper/texmf/tex/generic/matrix.skeleton
+	url = https://github.com/dudebout/matrix.skeleton
+[submodule "paper/texmf/tex/latex/latex_ddbglossaries"]
+	path = paper/texmf/tex/latex/latex_ddbglossaries
+	url = https://github.com/dudebout/latex_ddbglossaries
+[submodule "paper/texmf/tex/latex/latex_ddbinfo"]
+	path = paper/texmf/tex/latex/latex_ddbinfo
+	url = https://github.com/dudebout/latex_ddbinfo
+[submodule "paper/texmf/tex/latex/latex_ddbbib"]
+	path = paper/texmf/tex/latex/latex_ddbbib
+	url = https://github.com/dudebout/latex_ddbbib

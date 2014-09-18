@@ -1,0 +1,58 @@
+\matrix (m) [matrix of math nodes, label skeleton, row sep = 10pt, column sep = 30pt]
+{
+a\one \drawn \sigma\one \of {z\one}  & z\two\nxt \drawn m\two \of {z\two, s\two\nxt}   \\
+z\one\nxt \drawn m\one \of {z\one, s\one\nxt} & a\two \drawn \sigma\two \of {z\two}     \\
+};
+
+\boxcell{s1}{m-cell-1-1}
+\boxcell{m1}{m-cell-2-1}
+\boxcell{m2}{m-cell-1-2}
+\boxcell{s2}{m-cell-2-2}
+
+\coordinate                         (s1toA) at (s1.7);
+\coordinate [right = 30pt of s1toA] (s1toB);
+
+\coordinate                           (m1tom1A) at (m1.7);
+\coordinate [right = 10pt of m1tom1A] (m1tom1B);
+\coordinate [above = 5pt of m1.north] (m1tom1C);
+\coordinate                           (m1tom1E) at (m1.west);
+\coordinate [left = 10pt of m1tom1E]  (m1tom1D);
+
+\draw let
+  \p1 = (m1tom1D),
+  \p2 = (m1tom1C)
+in
+  node [connection] (m1tos1A) at (\x1, \y2) {};
+\coordinate (m1tos1B) at (s1.west);
+
+\coordinate                         (u1toB) at (m1.353);
+\coordinate [right = 30pt of u1toB] (u1toA);
+
+\draw [->] (s1toA) -- node [pos=0.15, anchor=south] (aone) {\(a\one\) } node [pos=0.85, anchor=south] (stwo) {\(s\two\nxt\) } (s1toB);
+\draw [->] (m1tom1A) -- (m1tom1B) |- (m1tom1C) -| (m1tom1D) -- (m1tom1E);
+\draw [->] (m1tos1A) |- (m1tos1B);
+\draw [->] (u1toA) -- node [below, pos=0.15, anchor=south, yshift=-18pt] (atwo) {\(a\two\) } node [below, pos=0.85, anchor=south, yshift=-18pt] (sone) {\(s\one\nxt\) }  (u1toB);
+
+\node [left] (zone) at (m1tos1A) {\(z\one\)};
+
+\coordinate                           (m2tom2A) at (m2.east);
+\coordinate [right = 10pt of m2tom2A] (m2tom2B);
+\coordinate [below = 5pt of m2.south] (m2tom2C);
+\coordinate                           (m2tom2E) at (m2.187);
+\coordinate [left = 10pt of m2tom2E]  (m2tom2D);
+
+\draw let
+  \p1 = (m2tom2B),
+  \p2 = (m2tom2C)
+in
+  node [connection] (m2tos2A) at (\x1, \y2) {};
+\coordinate (m2tos2B) at (s2.east);
+
+\draw [->] (m2tos2A) |- (m2tos2B);
+\draw [->] (m2tom2A) -- (m2tom2B) |- (m2tom2C) -| (m2tom2D) -- (m2tom2E);
+
+\node [right] at (m2tos2A) {\(z\two\)};
+
+\begin{pgfonlayer}{background}
+\node [fit=(m-column-1) (zone) (aone) (sone), gray!10, fill] {};
+\end{pgfonlayer}

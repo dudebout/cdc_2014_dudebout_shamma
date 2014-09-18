@@ -1,0 +1,45 @@
+\matrix (m) [matrix of math nodes, label skeleton, row sep = 10pt, column sep = 20pt]
+{
+a\one \drawn \sigma\one \of {z\one}   &  \\
+z\one\nxt \drawn m\one \of {z\one, s\one\nxt} & s\one\nxt \drawn \mu\one\of{z\one} \\
+};
+
+\boxcell{s1}{m-cell-1-1}
+\boxcell{m1}{m-cell-2-1}
+\boxcell{mu1}{m-cell-2-2}
+
+\coordinate                         (s1toA) at (s1.east);
+\coordinate [right = 10pt of s1toA] (s1toB);
+
+\coordinate                           (m1tom1A) at (m1.7);
+\coordinate [right = 10pt of m1tom1A] (m1tom1B);
+\coordinate [above = 5pt of m1.north] (m1tom1C);
+\coordinate                           (m1tom1E) at (m1.west);
+\coordinate [left = 10pt of m1tom1E]  (m1tom1D);
+
+\draw let
+  \p1 = (m1tom1D),
+  \p2 = (m1tom1C)
+in
+  node [connection] (m1tos1A) at (\x1, \y2) {};
+\coordinate (m1tos1B) at (s1.west);
+
+\draw let
+  \p1 = (m1tom1B),
+  \p2 = (m1tom1C)
+in
+  node [connection] (m1tomu1A) at (\x1, \y2) {};
+\coordinate                            (m1tomu1C) at (mu1.east);
+\coordinate [right = 10pt of m1tomu1C] (m1tomu1B);
+\draw [->] (m1tomu1A) -| (m1tomu1B) -- (m1tomu1C);
+
+\coordinate                        (u1toB) at (m1.353);
+\coordinate [right = 20pt of u1toB] (u1toA);
+
+\draw [->] (s1toA) -- (s1toB);
+\draw [->] (m1tom1A) -- (m1tom1B) |- (m1tom1C) -| (m1tom1D) -- (m1tom1E);
+\draw [->] (m1tos1A) |- (m1tos1B);
+\draw [->] (u1toA) -- node [below] {\(s\one\nxt\)} (u1toB);
+
+\node [left] at (m1tos1A) {\(z\one\)};
+\node [right]  at (s1toB) {\(a\one\)};
