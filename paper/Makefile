@@ -1,10 +1,11 @@
-TEXMFHOME = texmf
+TEXMFHOME := texmf
+export TEXMFHOME
 
 CONTENT := $(wildcard *.tex)
 PACKAGES := $(wildcard *.sty)
 FIGURES := $(wildcard *.tikz)
 
-latex = pdflatex -halt-on-error
+latex := pdflatex -halt-on-error
 
 .PHONY: all
 all: paper.pdf
